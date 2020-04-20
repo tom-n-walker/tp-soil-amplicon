@@ -48,7 +48,6 @@ vignettes/*.pdf
 *.html
 *.pdf
 *.Rmd
-*.md
 *.doc
 *.docx
 *.tif
