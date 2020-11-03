@@ -1,31 +1,59 @@
+################################################################################
+#### Project: TP Network
+#### Title:   Drake plan
+#### Author:  Tom Walker (thomas.walker@usys.ethz.ch)
+#### Date:    03 November 2020
+#### ---------------------------------------------------------------------------
+
+
+#### PROLOGUE ------------------------------------------------------------------
+
+## Options ----
+# remove objects from global environment
 rm(list = ls())
 
+# configure default R session options (no factors, bias against scientific #s)
+options(stringsAsFactors = F,
+scipen = 6)
 
-#### DRAKE PLAN FOR PROCESSING AMPLICON SEQUENCE DATA --------------------------
+## Libraries ----
+source("packages.r")
+
+## Code ----
+scripts <- list.files(
+  "./code",
+  full.names = T
+)
+
+sapply(
+  scripts,
+  source
+)
 
 
-### Load packages ----
+#### PLANS ---------------------------------------------------------------------
 
-library(drake)
-library(tidyverse)
-library(data.table)
+## Format sequence data ----
+sequencePlan <- drake_plan(
+  ## Load and split raw data ----
+  rawData = load_raw_data(),
+  project = "MT",
+  subData = split_raw_data(
+    input = rawData,
+    project = project
+  )
+)
 
 
-### Source scripts ----
+#### MAKE ----------------------------------------------------------------------
 
-code_dir <- paste0(getwd(), "/code/")
-source(paste0(code_dir, "split_raw_data.R"))
+## Bind plans ----
+thePlan <- bind_rows(
+  sequencePlan
+)
 
+## Make ----
+make(thePlan)
 
-### Drake workflow ----
-
-# build and bind plans
-wrangle <- drake_plan(my_split = load_split_raw())
-bound_plan <- bind_rows(wrangle)
-
-# make
-make(bound_plan)
-
-# visualise
-plan_config <- drake_config(bound_plan)
-vis_drake_graph(plan_config)
+## Visualise targets ----
+vis_drake_graph(thePlan)
