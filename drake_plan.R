@@ -41,6 +41,10 @@ sequencePlan <- drake_plan(
   subData = split_raw_data(
     input = rawData,
     project = project
+  ),
+  ## Format data ----
+  cleanData = clean_sequences(
+    subData = subData
   )
 )
 
