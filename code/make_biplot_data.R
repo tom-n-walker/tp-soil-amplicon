@@ -5,7 +5,7 @@
 #### Date:    24 November 2020
 #### ---------------------------------------------------------------------------
 
-make_biplot <- function(PC1, PC2, groupVar){
+make_biplot_data <- function(PC1, PC2, groupVar){
   ## Bind data ----
   allData <- data.frame(PC1, PC2, groupVar)
   xyData <- cbind(meanPC1 = PC1, meanPC2 = PC2)
