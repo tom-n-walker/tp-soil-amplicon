@@ -33,27 +33,33 @@ sapply(
 
 #### PLANS ---------------------------------------------------------------------
 
-## Format sequence data ----
-sequencePlan <- drake_plan(
+## Load and format data ----
+formatPlan <- drake_plan(
   ## Load and split raw data ----
-  rawData = load_raw_data(),
+  seqData = load_raw_data(),
+  climData = load_clim_data(),
   project = "MT",
-  subData = split_raw_data(
-    input = rawData,
+  subSeqData = split_raw_data(
+    input = seqData,
     project = project
   ),
+  soilData = load_soil_data(),
   ## Format data ----
-  cleanData = clean_sequences(
-    subData = subData
+  cleanData = clean_all_data(
+    subSeqData = subSeqData,
+    climData = climData,
+    soilData = soilData
   )
 )
+
+## Format other data ----
 
 
 #### MAKE ----------------------------------------------------------------------
 
 ## Bind plans ----
 thePlan <- bind_rows(
-  sequencePlan
+  formatPlan
 )
 
 ## Make ----

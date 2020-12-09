@@ -6,28 +6,33 @@
 #### ---------------------------------------------------------------------------
 
 load_raw_data <- function(){
-  # specify directories
-  meta_dir <- paste0(getwd(), "/from_hannes/")
-  data_dir <- paste0(meta_dir, "/processed files/")
-  # load metadata
-  meta <- fread(paste0(meta_dir, "metadata.csv"))
-  # load count data - drop row names (sample ID)
+  ## Load and format metadata ----
+  # Load sample metadata
+  meta <- fread(
+    "./from_hannes/metadata.csv", 
+    data.table = F
+  )
+  ## Load count data
   bac_nums <- fread(
-    file = paste0(data_dir, "MT_16S_matrix.csv"), 
-    drop = 1
+    file = "./from_hannes/processed files/MT_16S_matrix.csv",
+    drop = 1,
+    data.table = F
   )
   fun_nums <- fread(
-    file = paste0(data_dir, "MT_ITS1_countmatrix.csv"), 
-    drop = 1
+    file = "./from_hannes/processed files/MT_ITS1_countmatrix.csv",
+    drop = 1,
+    data.table = F
   )
-  # load taxonomy data - specify header (sample ID column no header)
+  ## Load taxonomy data
   bac_tax <- fread(
-    file = paste0(data_dir, "MT_16S_taxonomy.csv"), 
-    header = T
+    file = "./from_hannes/processed files/MT_16S_taxonomy.csv", 
+    header = T,
+    data.table = F
   )
   fun_tax <- fread(
-    file = paste0(data_dir, "MT_ITS1_taxonomy.csv"), 
-    header = T
+    file = "./from_hannes/processed files/MT_ITS1_taxonomy.csv", 
+    header = T,
+    data.table = F
   )
   # construct list and return
   out <- list(
