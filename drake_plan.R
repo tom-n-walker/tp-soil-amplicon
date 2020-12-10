@@ -14,7 +14,7 @@ rm(list = ls())
 
 # configure default R session options (no factors, bias against scientific #s)
 options(stringsAsFactors = F,
-scipen = 6)
+        scipen = 6)
 
 ## Libraries ----
 source("packages.r")
@@ -34,21 +34,46 @@ sapply(
 #### PLANS ---------------------------------------------------------------------
 
 ## Load and format data ----
-formatPlan <- drake_plan(
-  ## Load and split raw data ----
+loadPlan <- drake_plan(
+  # Load all data
   seqData = load_raw_data(),
   climData = load_clim_data(),
-  project = "MT",
+  soilData = load_soil_data(),
+  # Subset ASV data
   subSeqData = split_raw_data(
     input = seqData,
-    project = project
-  ),
-  soilData = load_soil_data(),
-  ## Format data ----
-  cleanData = clean_all_data(
-    subSeqData = subSeqData,
+    project = "MT"
+  )
+)
+formatPlan <- drake_plan(
+  # Sample and metadata
+  sampleData = compile_sample_data(
+    metadata = subSeqData$metadata,
     climData = climData,
     soilData = soilData
+  ),
+  siteData = compile_site_data(
+    metadata = subSeqData$metadata,
+    climData = climData
+  ),
+  # Filter and normalise ASV data
+  bacClean = clean_asv_data(
+    metadata = sampleData,
+    counts = subSeqData$counts$bacteria,
+    taxonomy = subSeqData$taxonomy$bacteria,
+    prev_cutoff1 = 1,
+    prev_cutoff2 = 0.2,
+    perc_cutoff = 0.01,
+    count_cutoff = 2500
+  ),
+  funClean = clean_asv_data(
+    metadata = sampleData,
+    counts = subSeqData$counts$fungi,
+    taxonomy = subSeqData$taxonomy$fungi,
+    prev_cutoff1 = 1,
+    prev_cutoff2 = 0.2,
+    perc_cutoff = 0.01,
+    count_cutoff = 0
   )
 )
 
@@ -59,6 +84,7 @@ formatPlan <- drake_plan(
 
 ## Bind plans ----
 thePlan <- bind_rows(
+  loadPlan,
   formatPlan
 )
 
