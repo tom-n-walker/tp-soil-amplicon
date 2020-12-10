@@ -6,35 +6,54 @@
 #### ---------------------------------------------------------------------------
 
 load_raw_data <- function(){
-  ## Load and format metadata ----
-  # Load sample metadata
+  # project directory
+  projectDir <- paste0(
+    "/Users/tomwalker/Dropbox/projects/2018_transplant/",
+    "SNF_network/data/soil_amplicon/processing/"
+  )
+  # Load and format metadata ----
   meta <- fread(
-    "./data/metadata.csv", 
+    file = paste0(
+      projectDir, 
+      "from_hannes/metadata.csv"
+    ),
     data.table = F
   )
-  ## Load count data
+  ## Load count data ----
   bac_nums <- fread(
-    file = "./data/MT_16S_matrix.csv",
+    file = paste0(
+      projectDir, 
+      "from_hannes/processed_files/MT_16S_matrix.csv"
+    ),
     drop = 1,
     data.table = F
   )
   fun_nums <- fread(
-    file = "./data/MT_ITS1_countmatrix.csv",
+    file = paste0(
+      projectDir, 
+      "from_hannes/processed_files/MT_ITS1_countmatrix.csv"
+    ),
     drop = 1,
     data.table = F
   )
-  ## Load taxonomy data
+  ## Load taxonomy data ----
   bac_tax <- fread(
-    file = "./data/MT_16S_taxonomy.csv", 
+    file = paste0(
+      projectDir,
+      "from_hannes/processed_files/MT_16S_taxonomy.csv"
+    ), 
     header = T,
     data.table = F
   )
   fun_tax <- fread(
-    file = "./data/MT_ITS1_taxonomy.csv", 
+    file = paste0(
+      projectDir,
+      "from_hannes/processed_files/MT_ITS1_taxonomy.csv"
+    ), 
     header = T,
     data.table = F
   )
-  # construct list and return
+  ## Construct list and return ----
   out <- list(
     metadata = meta,
     counts = list(bacteria = bac_nums,

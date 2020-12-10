@@ -20,6 +20,11 @@ apply_gmpr <- function(physeq){
     physeq@tax_table,
     physeq@sam_data
   )
+  # Prune samples that are NA
+  outPruned <- prune_samples(
+    complete.cases(gmprFactor),
+    out
+  )
   # Return
   return(out)
 }

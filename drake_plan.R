@@ -61,8 +61,8 @@ formatPlan <- drake_plan(
     metadata = sampleData,
     counts = subSeqData$counts$bacteria,
     taxonomy = subSeqData$taxonomy$bacteria,
-    prev_cutoff1 = 1,
-    prev_cutoff2 = 0.2,
+    prev_cutoff1 = 2,
+    prev_cutoff2 = 0.1,
     perc_cutoff = 0.01,
     count_cutoff = 2500
   ),
@@ -70,8 +70,8 @@ formatPlan <- drake_plan(
     metadata = sampleData,
     counts = subSeqData$counts$fungi,
     taxonomy = subSeqData$taxonomy$fungi,
-    prev_cutoff1 = 1,
-    prev_cutoff2 = 0.2,
+    prev_cutoff1 = 2,
+    prev_cutoff2 = 0.1,
     perc_cutoff = 0.01,
     count_cutoff = 0
   )

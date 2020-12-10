@@ -6,7 +6,7 @@
 #### ---------------------------------------------------------------------------
 
 
-GMPR <- function(comm, intersect.no = 10, ct.min = 1, trace = TRUE){
+GMPR <- function(comm, intersect.no = 5, ct.min = 1, trace = TRUE){
   # Args:
   #   comm: a matrix of counts, row - OTUs, column - sample
   #   intersect.no: min. no. shared OTUs between pairs (ratio is calculated)

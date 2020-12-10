@@ -7,7 +7,12 @@
 
 load_clim_data <- function(){
   # Load data
-  all <- fread("./data/metadata_transplant.csv")
+  all <- fread(
+    file = paste0(
+      "/Users/tomwalker/Dropbox/projects/2018_transplant/SNF_network/data",
+      "/soil_amplicon/metadata_transplant.csv"
+    )
+  )
   # Format
   out <- all %>%
     filter(elev_cat != "low_2") %>%
