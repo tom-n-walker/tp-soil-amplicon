@@ -9,28 +9,28 @@ load_raw_data <- function(){
   ## Load and format metadata ----
   # Load sample metadata
   meta <- fread(
-    "./from_hannes/metadata.csv", 
+    "./data/metadata.csv", 
     data.table = F
   )
   ## Load count data
   bac_nums <- fread(
-    file = "./from_hannes/processed files/MT_16S_matrix.csv",
+    file = "./data/MT_16S_matrix.csv",
     drop = 1,
     data.table = F
   )
   fun_nums <- fread(
-    file = "./from_hannes/processed files/MT_ITS1_countmatrix.csv",
+    file = "./data/MT_ITS1_countmatrix.csv",
     drop = 1,
     data.table = F
   )
   ## Load taxonomy data
   bac_tax <- fread(
-    file = "./from_hannes/processed files/MT_16S_taxonomy.csv", 
+    file = "./data/MT_16S_taxonomy.csv", 
     header = T,
     data.table = F
   )
   fun_tax <- fread(
-    file = "./from_hannes/processed files/MT_ITS1_taxonomy.csv", 
+    file = "./data/MT_ITS1_taxonomy.csv", 
     header = T,
     data.table = F
   )
