@@ -31,24 +31,25 @@ clean_asv_data <- function(
   rawSeq <- phyloseq(countTable, taxoTable, metaTable)
   
   ## Filter data against poor sequence depth ----
+  # all data
   allSeq <- prune_samples(
     samples = sample_sums(rawSeq) > count_cutoff,
     x = rawSeq
   )
-  
-  ## Filter out rare taxa with relative abundance cutoff ----
-  # Calculate relative abundances (for now, only for filtering)
+  # Calculate relative abundances on raw data
   relAbunSeq <- transform_sample_counts(
     physeq = allSeq,
     fun = function(x) x / sum(x) * 100
   )
-  # Use this to generate percent filter
+  
+  ## Filter out rare taxa with relative abundance cutoff ----
+  # Use relative abundance data to generate percent filter
   percFilter <- filter_taxa(
     physeq = relAbunSeq,
     # filter where rel abun of ASV (x) is more than [perc_cutoff] % in samples
     flist = function(x) sum(x) > perc_cutoff
   )
-  # Apply percent filter to count data
+  # Apply percent filter to raw count data
   percASV <- prune_taxa(
     taxa = percFilter,
     x = allSeq
@@ -78,7 +79,10 @@ clean_asv_data <- function(
   
   ## Generate output ----
   out <- list(
-    raw = allSeq,
+    raw = list(
+      counts = allSeq,
+      relAbun = relAbunSeq
+    ),
     percFilter = list(
       relAbun = percRelAbun,
       gmpr = percGMPR
