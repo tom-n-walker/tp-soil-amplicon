@@ -57,27 +57,59 @@ formatPlan <- drake_plan(
     climData = climData
   ),
   # Filter and normalise ASV data
-  bacClean = clean_asv_data(
+  bacFull = clean_asv_data(
     metadata = sampleData,
     counts = subSeqData$counts$bacteria,
     taxonomy = subSeqData$taxonomy$bacteria,
-    prev_cutoff1 = 2,
-    prev_cutoff2 = 0.1,
-    perc_cutoff = 0.01,
-    count_cutoff = 2500
+    perc.cutoff = 0.0001, 
+    prev.cutoff1 = 100,
+    prev.cutoff2 = 0.1,
+    count.cutoff = 2500
   ),
-  funClean = clean_asv_data(
+  funFull = clean_asv_data(
     metadata = sampleData,
     counts = subSeqData$counts$fungi,
     taxonomy = subSeqData$taxonomy$fungi,
-    prev_cutoff1 = 2,
-    prev_cutoff2 = 0.1,
-    perc_cutoff = 0.01,
-    count_cutoff = 0
+    perc.cutoff = 0.0001, 
+    prev.cutoff1 = 100,
+    prev.cutoff2 = 0.1,
+    count.cutoff = 0
   )
 )
 
-## Format other data ----
+## QC on ASV data ----
+qcPlan <- drake_plan(
+  bacFilterQC = plot_filter_bac(
+    seqData = bacFull
+  ),
+  funFilterQC = plot_filter_fun(
+    seqData = funFull
+  )
+)
+
+## Analysis ----
+analysePlan <- drake_plan(
+  # Select filtering option
+  fungi = funFull$percGMPR,
+  bacteria = bacFull$percGMPR,
+  # Subset for simplicity
+  bacSub = tax_glom(bacteria, taxrank = "Phylum"),
+  funSub = tax_glom(fungi, taxrank = "Class"),
+  # NMDS on full data
+  funFullNMDS = sitewise_nmds(seqData = fungi),
+  bacFullNMDS = sitewise_nmds(seqData = bacteria),
+  # NMDS on subset data
+  funSubNMDS = sitewise_nmds(seqData = funSub),
+  bacSubNMDS = sitewise_nmds(seqData = bacSub),
+  # Collate data
+  finalDF = collate_final(
+    funSeq = fungi,
+    funFullNMDS = funFullNMDS,
+    funSubNMDS = funSubNMDS,
+    bacFullNMDS = bacFullNMDS,
+    bacSubNMDS = bacSubNMDS
+  )
+)
 
 
 #### MAKE ----------------------------------------------------------------------
@@ -85,7 +117,9 @@ formatPlan <- drake_plan(
 ## Bind plans ----
 thePlan <- bind_rows(
   loadPlan,
-  formatPlan
+  formatPlan,
+  qcPlan,
+  analysePlan
 )
 
 ## Make ----
