@@ -5,32 +5,33 @@
 #### Date:    9 December 2020
 #### ---------------------------------------------------------------------------
 
-compile_site_data <- function(metadata, climData){
-  ## Format metadata ----
-  # Join datasets
-  allMeta <- left_join(
-    metadata,
-    climData,
-    by = c("site", "treat_c")
-  )
+compile_site_data <- function(climData){
   ## Format site-level data ----
-  siteMeta <- allMeta %>%
-    # group
+  allData <- climData %>%
+    # arrange data to make diff calculations work
+    arrange(site, elev_cat) %>%
+    # arrange data to make diff calculations work
     group_by(site) %>%
-    # get site level information
+    # for differences, take range
     summarise(
-      # difference between high and low elevation sites
+      # categorical site level take first
+      across(c(gradient:country, start_year:plot_m2), first),
+      # ranges (elevation reversed)
       elev_range = diff(range(elev_m)),
-      # all other variables take first (same across all elements)
-      continent = first(continent),
-      country = first(country),
-      lat = first(lat),
-      lon = first(long),
-      mat = first(mat),
-      map = first(map),
-      age = first(year_range)
+      mat_diff = diff(T_ann_cor),
+      mst_diff = diff(T_sum_cor),
+      tap_diff = diff(P_ann),
+      vpd_diff = diff(V_ann),
+      # re-express in terms of years of warming
+      mat_cumdiff = mat_diff * first(year_range),
+      mst_cumdiff = mst_diff * first(year_range),
+      tap_cumdiff = tap_diff * first(year_range),
+      vpd_cumdiff = vpd_diff * first(year_range)
     ) %>%
-    ungroup
+    # ungroup, order sites by cumulative summer warming and make data frame
+    ungroup %>%
+    mutate(site = fct_reorder(site, mst_cumdiff, min)) %>%
+    as.data.frame
   ## Return ----
-  return(siteMeta)
+  return(allData)
 }

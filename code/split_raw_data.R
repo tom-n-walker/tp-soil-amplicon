@@ -20,7 +20,8 @@ split_raw_data <- function(input, project){
     select(all_of(position))
   # Metadata
   metaSub <- input$metadata %>%
-    slice(position)
+    slice(position) %>%
+    select(-experiment)
   ## Generate output ----
   out <- list(
     metadata = metaSub,

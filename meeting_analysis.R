@@ -39,44 +39,9 @@ sapply(
 ## Data ----
 # drake processed data
 drake::loadd()
-# climate data
-clim <- fread(
-  paste0(
-    "../../../Dropbox/projects/2018_transplant/SNF_network/", 
-    "data/climate_data/worlclim2_processedtemp.csv"
-  ),
-  data.table = F
-)
 
 
 #### FORMAT --------------------------------------------------------------------
-
-## Climate data ----
-climSum <- clim %>%
-  # arrange data to make diff calculations work
-  arrange(site, elev_cat) %>%
-  # bin useless columns
-  select(site, elev_cat:elev, T_ann_cor:T_win_cor) %>%
-  # bin china
-  filter(site != "YAN") %>%
-  # group by site
-  group_by(site) %>%
-  summarise(
-    .groups = "keep",
-    # calculate warming between high and low sites
-    annWarm = diff(T_ann_cor),
-    sumWarm = diff(T_sum_cor),
-    winWarm = diff(T_win_cor),
-    # re-express in terms of years of warming
-    annCumWarm = annWarm * first(year_range),
-    sumCumWarm = sumWarm * first(year_range),
-    winCumWarm = winWarm * first(year_range),
-    # calculate elevation and year ranges
-    elevRange = diff(rev(elev)),
-    yearRange = first(year_range)
-  ) %>%
-  ungroup %>%
-  mutate(site = fct_reorder(site, sumCumWarm, min))
 
 ## Process data ----
 # generate factor order for plots
@@ -98,7 +63,7 @@ finalCats <- finalDF %>%
   # recode factors for full analysis
   mutate(treat_diff = factor(treat_a, c("HL", "HH", "LL"))) %>%
   mutate(treatment = factor(treat_a, c("HH", "HL", "LL"))) %>%
-  mutate(site = factor(site, levels(climSum$site))) %>%
+  mutate(site = factor(site, levels(siteData$site))) %>%
   select(site, treat_diff, treatment, rep_block, continent, country, elev_cat:year_range)
 # all data
 final <- finalDF %>%
@@ -118,7 +83,7 @@ final <- finalDF %>%
 
 ## Do PCAs ----
 # group climate data
-climGroup <- climSum %>%
+climGroup <- siteData %>%
   group_by(site)
 # Do PCAs
 pcas <- final %>%

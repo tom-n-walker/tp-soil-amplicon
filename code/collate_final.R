@@ -5,9 +5,9 @@
 #### Date:    16 February 2021
 #### ---------------------------------------------------------------------------
 
-collate_final <- function(funSeq, bacFullNMDS, funFullNMDS, bacSubNMDS, funSubNMDS){
+collate_final <- function(soilData, fungi, bacFullNMDS, funFullNMDS, bacSubNMDS, funSubNMDS){
   # organise sample data
-  samples <- sample_data(funSeq) %>%
+  samples <- sample_data(fungi) %>%
     unclass %>%
     as.data.frame %>%
     arrange(site)
@@ -28,7 +28,18 @@ collate_final <- function(funSeq, bacFullNMDS, funFullNMDS, bacSubNMDS, funSubNM
       bacSub2 = MDS2.y.y
     )
   # bind together
-  output <- cbind(samples, allReady)
+  samplesNMDS <- cbind(samples, allReady) %>%
+    mutate(rep = as.numeric(rep_block)) %>%
+    select(-rep_block)
+  # add soil data
+  output <- soilData %>%
+    rename(treat_a = treatment) %>%
+    left_join(., samplesNMDS) %>%
+    select(
+      site, gradient:site_id, 
+           treat_a, treat_b:treat_c, rep, 
+           elev_m:bacSub2, h2o_mgg:TRate_d
+    )
   # return
   return(output)
 }

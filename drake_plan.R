@@ -49,11 +49,9 @@ formatPlan <- drake_plan(
   # Sample and metadata
   sampleData = compile_sample_data(
     metadata = subSeqData$metadata,
-    climData = climData,
-    soilData = soilData
+    climData = climData
   ),
   siteData = compile_site_data(
-    metadata = subSeqData$metadata,
     climData = climData
   ),
   # Filter and normalise ASV data
@@ -103,7 +101,8 @@ analysePlan <- drake_plan(
   bacSubNMDS = sitewise_nmds(seqData = bacSub),
   # Collate data
   finalDF = collate_final(
-    funSeq = fungi,
+    fungi = fungi,
+    soilData = soilData,
     funFullNMDS = funFullNMDS,
     funSubNMDS = funSubNMDS,
     bacFullNMDS = bacFullNMDS,
