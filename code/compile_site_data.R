@@ -16,6 +16,11 @@ compile_site_data <- function(climData){
     summarise(
       # categorical site level take first
       across(c(gradient:country, start_year:plot_m2), first),
+      # mean climate information
+      mat_mean = mean(T_ann_cor),
+      mst_mean = mean(T_sum_cor),
+      tap_mean = mean(P_ann),
+      vpd_mean = mean(V_ann),
       # ranges (elevation reversed)
       elev_range = diff(range(elev_m)),
       mat_diff = diff(T_ann_cor),
