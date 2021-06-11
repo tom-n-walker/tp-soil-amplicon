@@ -101,8 +101,10 @@ analysePlan <- drake_plan(
   bacSubNMDS = sitewise_nmds(seqData = bacSub),
   # Collate data
   finalDF = collate_final(
-    fungi = fungi,
+    siteData = siteData,
+    sampleData = sampleData,
     soilData = soilData,
+    fungi = fungi,
     funFullNMDS = funFullNMDS,
     funSubNMDS = funSubNMDS,
     bacFullNMDS = bacFullNMDS,
@@ -125,4 +127,4 @@ thePlan <- bind_rows(
 make(thePlan)
 
 ## Visualise targets ----
-vis_drake_graph(thePlan)
+vis_drake_graph(thePlan, targets_only = T)
