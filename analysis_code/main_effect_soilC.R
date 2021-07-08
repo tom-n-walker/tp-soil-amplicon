@@ -50,8 +50,8 @@ soilContext <- data.frame(
   soilChh = allData$metaMetrics$soilC_mgCg$HH,
   soilPC1hh = allData$metaMetrics$soilPC1$HH,
   soilPC2hh = allData$metaMetrics$soilPC2$HH,
-  soilPC1hl = allData$metaMetrics$soilPC1$HL,
-  soilPC2hl = allData$metaMetrics$soilPC2$HL
+  soilPC1hlhh = allData$metaMetrics$soilPC1$HLvHHmean,
+  soilPC2hlhh = allData$metaMetrics$soilPC2$HLvHHmean
 )
 # assemble drivers
 drivers <- allData$metaMetrics$soilC_mgCg %>%
@@ -73,6 +73,8 @@ causeEffect$site <- factor(causeEffect$site, levels = siteData$site)
 
 
 #### MODEL ---------------------------------------------------------------------
+
+causeEffect <- filter(causeEffect, tap_mean < 6)
 
 ## Model treatments ----
 # build
@@ -96,9 +98,25 @@ emmeans(m1ref, pairwise ~ treat_a | site)$contrasts
 
 ## Model change from HH end member ----
 # build model
-m2 <- lm(HLvHHmean ~ mst_cumdiff * soilChh + tap_mean + soilChh, causeEffect)
-m2 <- lm(HLvHHmean ~ mst_cumdiff * soilChh + tap_mean + soilChh, filter(causeEffect, tap_mean < 6))
-anova(m2)
+m2 <- gls(
+  HLvHHmean ~ mst_cumdiff * soilChh + mst_cumdiff * mat_mean,
+  causeEffect,
+  weights = varIdent(form = ~ 1 | site),
+  method = "ML",
+  na.action = na.exclude
+)
+# diagnose
+r2 <- residuals(m2)
+par(mfrow = c(1, 3))
+plot(r2 ~ fitted(m2))
+boxplot(r2 ~ causeEffect$site)
+hist(r2)
+# main effects
+drop1(m2, test = "Chisq")
+m2a <- update(m2, ~.- mst_cumdiff:tap_mean - mst_cumdiff:mat_mean)
+drop1(m2a, test = "Chisq")
+m2b <- update(m2a, ~.- mat_mean)
+drop1(m2b, test = "Chisq")
 # build dataset for plotting
 predictHHvHL <- data.frame(
   mst_cumdiff = rep(0:30, 2), # create sequence of cumulative warming
@@ -106,7 +124,7 @@ predictHHvHL <- data.frame(
   soilCcat = rep(c("L", "H"), each = 31),
   soilChh = rep(c(68, 122), each = 31) # use 1st and 3rd quantiles for low/high
 )
-predictHHvHL$predicted <- predict(m2, newdata = predictHHvHL)
+predictHHvHL$predicted <- predict(m2b, newdata = predictHHvHL)
 # plot
 HLvHHtap <- ggplot(causeEffect) +
   theme_bw() +
@@ -143,8 +161,8 @@ HLvHHmodel <- ggplot(predictHHvHL) +
 
 ## Model change from LL end member ----
 # build model
-m3 <- lm(HLvLLmean ~ mst_cumdiff + soilChh + tap_mean + soilChh, causeEffect)
-m3 <- lm(HLvLLmean ~ mst_cumdiff * soilChh + tap_mean * soilChh, filter(causeEffect, tap_mean < 6))
+m3 <- lm(HLvLLmean ~ mst_cumdiff + tap_mean, causeEffect)
+m3 <- lm(HLvLLmean ~ mst_cumdiff + tap_mean, filter(causeEffect, tap_mean < 6))
 anova(m3)
 # plot
 HLvLLtap <- ggplot(causeEffect) +

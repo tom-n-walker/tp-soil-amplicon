@@ -202,7 +202,7 @@ fullPC2model <- lme(
 anova(fullPC1model, update(fullPC1model, ~.- treat_a))
 anova(fullPC2model, update(fullPC2model, ~.- treat_a))
 # post-hoc
-emmeans(fullPC1model, pairwise ~ treat_a | site)
+emmeans(fullPC1model, pairwise ~ treat_a)
 emmeans(fullPC2model, pairwise ~ treat_a)
 
 

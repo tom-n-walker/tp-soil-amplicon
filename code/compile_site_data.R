@@ -8,6 +8,8 @@
 compile_site_data <- function(climData){
   ## Format site-level data ----
   allData <- climData %>%
+    # remove yan site (sampling problem led to them being incompatible)
+    filter(site != "YAN") %>%
     # arrange data to make diff calculations work
     arrange(site, elev_cat) %>%
     # arrange data to make diff calculations work

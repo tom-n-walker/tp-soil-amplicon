@@ -49,7 +49,9 @@ collate_final <- function(siteData, sampleData, soilData, fungi, bacFullNMDS, fu
   # Bind together
   output <- soil %>%
     right_join(allSamples, .) %>%
-    left_join(., nmdsScores)
+    left_join(., nmdsScores) %>%
+    # remove YAN - mistake with sampling so not comparable
+    filter(site != "YAN")
   
   ## Summarise soil responses with PCA ----
   # do
