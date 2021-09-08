@@ -31,7 +31,7 @@ source("./code/mm2in.R")
 allData <- drake::readd(finalDF)
 siteData <- drake::readd(siteData)
 # colour palettes
-myCols <- wes_palette("GrandBudapest2", n = 3)
+myCols <- wes_palette("GrandBudapest1", n = 3)
 
 
 #### FORMAT --------------------------------------------------------------------
@@ -163,13 +163,12 @@ coef(lm(soilC_mgCg ~ mst_cumdiff, HLvLL))
 fromHH <- ggplot(HLvHH) +
   theme_bw() +
   theme(panel.grid = element_blank()) +
-  guides(fill = "none", col = "none", shape = "none") +
-  aes(x = mst_cumdiff, y = soilC_mgCg, fill = soilCcat, col = soilCcat, shape = soilCcat) +
-  scale_shape_manual(values = c(21,22, 24)) +
-  scale_fill_manual(values = myCols) +
+  guides(fill = "none", col = "none") +
+  aes(x = mst_cumdiff, y = soilC_mgCg, col = soilCcat) +
+  scale_x_continuous(limits = c(0, NA)) +
   scale_colour_manual(values = myCols) +
   geom_hline(yintercept = 0) +
-  geom_point(col = "black") +
+  geom_point(size = 1.25) +
   geom_smooth(method = "lm", se = F) +
   geom_vline(xintercept = 16.97/1.2) +
   geom_vline(xintercept = 2.47/0.46) +
@@ -183,8 +182,9 @@ toLL <- ggplot(HLvLL) +
   theme(panel.grid = element_blank()) +
   guides(fill = "none", col = "none") +
   aes(x = mst_cumdiff, y = soilC_mgCg) +
+  scale_x_continuous(limits = c(0, NA)) +
   geom_hline(yintercept = 0) +
-  geom_point(col = "black", shape = 21, fill = "#cccccc") +
+  geom_point(col = "black", size = 1.25) +
   geom_smooth(method = "lm", se = F, col = "black") +
   geom_vline(xintercept = 70.8/2.35) +
   xlab("Cumulative warming (ºC)") +
@@ -212,10 +212,10 @@ lowSoilPlot <- ggplot(lowSoilSum) +
   theme(panel.grid = element_blank()) +
   guides(fill = "none", col = "none") +
   scale_fill_manual(values = myCols)  +
-  scale_y_continuous(limits = c(NA, 40)) +
+  scale_y_continuous(limits = c(-22, 50)) +
   aes(x = soilCcat, fill = soilCcat, y = mean) +
   geom_hline(yintercept = 0) +
-  geom_errorbar(aes(ymax = mean + se, ymin = mean - se), width = 0.2) +
+  geom_errorbar(aes(ymax = mean + se, ymin = mean - se), width = 0.4) +
   geom_bar(col = "black", stat = "identity") +
   xlab("Soil C content") +
   ylab("Diff. from origin (%)")
@@ -223,11 +223,11 @@ highSoilPlot <- ggplot(highSoilSum) +
   theme_bw() +
   theme(panel.grid = element_blank()) +
   guides(fill = "none", col = "none") +
-  scale_y_continuous(limits = c(NA, 40)) +
+  scale_y_continuous(limits = c(-22, 50)) +
   scale_fill_manual(values = myCols)  +
   aes(x = soilCcat, fill = soilCcat, y = mean) +
   geom_hline(yintercept = 0) +
-  geom_errorbar(aes(ymax = mean + se, ymin = mean - se), width = 0.2) +
+  geom_errorbar(aes(ymax = mean + se, ymin = mean - se), width = 0.4) +
   geom_bar(col = "black", stat = "identity") +
   xlab("Soil C content") +
   ylab("Diff. from origin (%)")

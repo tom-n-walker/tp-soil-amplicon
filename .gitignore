@@ -8,21 +8,17 @@
 # RStudio files
 .Rproj.user/
 
-# produced vignettes
-vignettes/*.html
-vignettes/*.pdf
-
 # OAuth2 token, see https://github.com/hadley/httr/releases/tag/v0.3
 .httr-oauth
 .Rproj.user
 
-#markdown cache
+# Markdown cache
 *_cache/
 
-#drake cache
+# Drake cache
 .drake/
 
-#data
+# Data
 *.txt
 *.csv
 *.tsv
@@ -36,15 +32,17 @@ vignettes/*.pdf
 *.dat
 *.rds
 *.rtf
+*.xls
+*.xlsx
 
-#rasters & shapefiles
+# Rasters & shapefiles
 *.bil
 *.blw
 *.hdr
 *.prj
 *.hproj
 
-#figures & output
+# Figures & output
 *.html
 *.pdf
 *.Rmd
