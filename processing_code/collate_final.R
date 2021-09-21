@@ -45,7 +45,7 @@ collate_final <- function(siteData, sampleData, soilData, fungi, bacFullNMDS, fu
   # Subset and format soil data
   soil <- soilData %>%
     rename(treat_a = treatment) %>%
-    select(site, treat_a, rep, h2o_mgg:TRate_d)
+    select(site, treat_a, rep, h2o_mgg:rpa_mom)
   # Bind together
   output <- soil %>%
     right_join(allSamples, .) %>%
@@ -57,7 +57,7 @@ collate_final <- function(siteData, sampleData, soilData, fungi, bacFullNMDS, fu
   # do
   soilPCA <- output %>%
     # get data
-    select(pH:CmicNmic, R_ugCgh:TRate_d, funFull1:funFull2, bacFull1:bacFull2) %>%
+    select(pH:CmicNmic, R_ugCgh:rpa_mom, funFull1:funFull2, bacFull1:bacFull2) %>%
     # impute missing values
     apply_mice(., 5) %>%
     # do PCA
