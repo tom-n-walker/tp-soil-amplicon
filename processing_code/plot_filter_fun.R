@@ -53,6 +53,7 @@ plot_filter_fun <- function(seqData){
     pvr = basePlot %+% aes(x = Class, y = prevRA, xend = Class, yend = 0) %+% xlab(""),
     pvg = basePlot %+% aes(x = Class, y = prevGMPR, xend = Class, yend = 0) %+% xlab("")
   )
+  
   ## Do NMDS ----
   nmdsPlots <- lapply(
     seqData,
@@ -80,9 +81,15 @@ plot_filter_fun <- function(seqData){
       return(out)
     }
   )
+  
   ## Collate plots ----
   # generate filenames
-  files <- paste0("./plots/qc_filtering/", "fun_", names(seqData), ".pdf")
+  files <- paste0(
+    "./figure_builds/qc_filtering/", 
+    "fun_", 
+    names(seqData), 
+    ".pdf"
+  )
   # plot
   for(i in 1:length(files)){
     pdf(file = files[i], width = mm2in(240), height = mm2in(100))

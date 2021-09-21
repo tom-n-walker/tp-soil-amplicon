@@ -21,7 +21,7 @@ source("packages.r")
 
 ## Code ----
 scripts <- list.files(
-  "./code",
+  "./processing_code/",
   full.names = T
 )
 
@@ -39,7 +39,7 @@ loadPlan <- drake_plan(
   seqData = load_raw_data(),
   climData = load_clim_data(),
   soilData = load_soil_data(),
-  # Subset ASV data
+  # Subset ASV data for this project code
   subSeqData = split_raw_data(
     input = seqData,
     project = "MT"
