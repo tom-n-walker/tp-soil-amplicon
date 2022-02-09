@@ -18,17 +18,17 @@ options(
 )
 
 ## Scripts ----
-source("./code/apply_mice.R")
-source("./code/make_biplot_data.R")
-source("./code/mm2in.R")
+source("./processing_code/apply_mice.R")
+source("./processing_code/make_biplot_data.R")
+source("./processing_code/mm2in.R")
 
 ## Libraries ----
 # standard library set
-library(tidyverse)
 library(data.table)
 library(nlme)
 library(mice)
 library(emmeans)
+library(tidyverse)
 
 ## Data ----
 # load

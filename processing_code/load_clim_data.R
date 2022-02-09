@@ -27,8 +27,9 @@ load_clim_data <- function(){
     select(
       gradient:site_id, 
       treat_c, elev_cat:start_year, year_range, plot_m2, 
-      T_ann_cor:P_ann
+      T_ann_cor, T_sum_cor, P_ann
     )
   # return
   return(out)
 }
+

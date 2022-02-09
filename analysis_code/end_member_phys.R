@@ -24,14 +24,14 @@ library(data.table)
 library(nlme)
 library(emmeans)
 library(cowplot)
-source("./code/mm2in.R")
+source("./processing_code/mm2in.R")
 
 ## Data ----
 # load
 allData <- drake::readd(finalDF)
 siteData <- drake::readd(siteData)
 # colour palettes
-myCols <- wesanderson::wes_palette("GrandBudapest1", n = 3)
+myCols <- wesanderson::wes_palette("GrandBudapest1", n = 2)
 
 
 #### FORMAT --------------------------------------------------------------------
@@ -63,11 +63,10 @@ HLvLL <- lapply(allData$metaMetrics, function(x){x$HLvLLmean}) %>%
   # remove where no soil C data
   filter(!is.na(soilChh)) %>%
   filter(Rm_ugCmic < 500)
-# add quartile-based split in starting soil C for plotting
-HLvHH[which(HLvHH$soilChh <= 58.7), "soilCcat"] <- "low"
-HLvHH[which(HLvHH$soilChh > 58.7 & HLvHH$soilChh <= 87.8), "soilCcat"] <- "medium"
-HLvHH[which(HLvHH$soilChh > 87.8), "soilCcat"] <- "high"
-HLvHH$soilCcat <- factor(HLvHH$soilCcat, levels = c("low", "medium", "high"))
+# add mineral/organic soil split
+HLvHH[which(HLvHH$soilChh <= 100), "soilCcat"] <- "mineral"
+HLvHH[which(HLvHH$soilChh > 100), "soilCcat"] <- "organic"
+HLvHH$soilCcat <- factor(HLvHH$soilCcat, levels = c("mineral", "organic"))
 HLvLL$soilCcat <- HLvHH$soilCcat
 
 

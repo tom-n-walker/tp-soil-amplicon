@@ -48,7 +48,7 @@ collate_final <- function(siteData, sampleData, soilData, fungi, bacFullNMDS, fu
     select(site, treat_a, rep, h2o_mgg:rpa_mom)
   # Bind together
   output <- soil %>%
-    right_join(allSamples, .) %>%
+    left_join(allSamples, .) %>%
     left_join(., nmdsScores) %>%
     # remove YAN - mistake with sampling so not comparable
     filter(site != "YAN")

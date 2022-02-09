@@ -18,9 +18,9 @@ options(
 )
 
 ## Scrips ----
-source("./code/apply_mice.R")
-source("./code/make_biplot_data.R")
-source("./code/mm2in.R")
+source("./processing_code/apply_mice.R")
+source("./processing_code/make_biplot_data.R")
+source("./processing_code/mm2in.R")
 
 ## Libraries ----
 # standard library set
@@ -43,7 +43,12 @@ myCols <- c("#666699", "#D9A464", "#996666")
 ## Format numeric data ----
 responses <- allData$fullDF %>%
   # get data
-  select(pH:CmicNmic, R_ugCgh:TRate_d, funFull1:funFull2, bacFull1:bacFull2) %>%
+  select(
+    pH:CmicNmic, 
+    R_ugCgh:rpa_mom, 
+    funFull1:funFull2, 
+    bacFull1:bacFull2
+    ) %>%
   # impute missing values
   apply_mice(., 5)
 
@@ -61,6 +66,8 @@ varNames <- c(
   "Microbial C", "Microbial N", "Microbial C:N", 
   # microbial processes
   "R", "G", "Mass-specific R", "Mass-specific G", "CUE", "Turnover rate",
+  # spectroscopy
+  "sPOM", "cPOM", "MOM",
   # mcc
   "Fungi 1", "Fungi 2", "Bacteria 1", "Bacteria 2"
 )
@@ -123,7 +130,6 @@ fullPC2 <- ggplot(fullSummary) +
   theme_bw() +
   theme(panel.grid = element_blank()) +
   scale_fill_manual(values = myCols) +
-  scale_y_continuous(limits = c(-1, 1)) +
   guides(fill = "none") +
   aes(x = treat_a, y = PC2mean, fill = treat_a, 
       ymax = PC2mean + PC2se, ymin = PC2mean - PC2se) +
@@ -154,7 +160,7 @@ fullPC2loads <- ggplot(fullLoadings) +
   labs(x = "", y = "PC2 loading")
 # print to file
 postscript(
-  file = "./plots/full_pca_scores.eps", 
+  file = "./figure_builds/full_pca_scores.eps", 
   width = mm2in(150), 
   height = mm2in(75)
 )
@@ -166,7 +172,7 @@ cowplot::plot_grid(
 )
 dev.off()
 postscript(
-  file = "./plots/full_pca_loadings.eps", 
+  file = "./figure_builds/full_pca_loadings.eps", 
   width = mm2in(180), 
   height = mm2in(75)
 )
@@ -204,35 +210,3 @@ anova(fullPC2model, update(fullPC2model, ~.- treat_a))
 # post-hoc
 emmeans(fullPC1model, pairwise ~ treat_a)
 emmeans(fullPC2model, pairwise ~ treat_a)
-
-
-#### PLOT BY SITE --------------------------------------------------------------
-
-## Get data ----
-siteScores <- fullScores %>%
-  group_by(site, treat_a) %>%
-  summarise(
-    meanPC1 = mean(PC1, na.rm = T),
-    sePC1 = sd(PC1, na.rm = T)/sqrt(n()),
-    meanPC2 = mean(PC2, na.rm = T),
-    sePC2 = sd(PC2, na.rm = T)/sqrt(n())
-  ) %>%
-  ungroup %>%
-  mutate(site = factor(site, levels = levels(siteData$site)))
-
-## Plot ---
-
-ggplot(siteScores) +
-  aes(x = treat_a, y = meanPC1, ymin = meanPC1 - sePC1, ymax = meanPC1 + sePC1, fill = treat_a) +
-  geom_errorbar(width = 0.2) +
-  geom_bar(stat = "identity") +
-  facet_wrap(~site, nrow = 1)
-
-
-
-
-
-
-
-
-
