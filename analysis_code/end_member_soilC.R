@@ -79,10 +79,10 @@ HLvLL$soilCcat <- LLvHH$soilCcat <- HLvHH$soilCcat
 # create weights for modelling
 varSite <- varIdent(form = ~ 1 | site)
 
-## HL versus HH ----
+## From HH control ----
 # model fit
 m1 <- gls(
-  soilC_mgCg ~ mst_cumdiff, 
+  soilC_mgCg ~ mst_cumdiff * soilChh + tap_mean, 
   weights = varSite,
   HLvHH, 
   na.action = "na.exclude", 
@@ -97,34 +97,6 @@ hist(r1)
 # effects
 drop1(m1, test = "Chisq")
 m1a <- update(m1, ~.- mst_cumdiff:tap_mean)
-drop1(m1a, test = "Chisq")
-
-
-
-
-
-
-
-
-## From HH control ----
-# model fit
-m1 <- gls(
-  soilC_mgCg ~ soilChh, 
-  weights = varSite,
-  LLvHH, 
-  na.action = "na.exclude", 
-  method = "ML"
-)
-# diagnose
-r1 <- residuals(m1, type = "pearson")
-par(mfrow = c(1, 3))
-plot(r1 ~ fitted(m1))
-boxplot(r1 ~ HLvHH$site)
-hist(r1)
-# effects
-drop1(m1, test = "Chisq")
-m1a <- update(m1, ~.- mst_cumdiff:tap_mean)
-drop1(m1a, test = "Chisq")
 
 ## To LL control ----
 # model fit
@@ -168,7 +140,7 @@ toLL <- ggplot(HLvLL) +
   theme_bw() +
   theme(panel.grid = element_blank()) +
   guides(fill = "none", col = "none") +
-  aes(x = mst_cumdiff, y = soilC_mgCg, col = soilCcat) +
+  aes(x = mst_cumdiff, y = soilC_mgCg) +
   scale_x_continuous(limits = c(0, NA)) +
   scale_colour_manual(values = myCols) +
   geom_hline(yintercept = 0) +

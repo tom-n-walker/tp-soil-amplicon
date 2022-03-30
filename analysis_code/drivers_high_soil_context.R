@@ -36,7 +36,6 @@ allData <- drake::readd(finalDF)
 highSoil <- allData$fullDF %>%
   # filter for high elevation control
   filter(treat_a == "HH") %>%
-  # generate categorical soil C 
   # add mineral/organic soil split
   mutate(soilCcat = ifelse(soilC_mgCg <= 100, "mineral", "organic")) %>%
   # select variables of interest
